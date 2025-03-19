@@ -1,0 +1,29 @@
+
+node_modules/
+package-lock.json
+
+# Vite build output
+dist/
+
+# Local environment variables
+.env
+
+
+# Logs
+npm-debug.log*
+debug.log*
+.vscode/*.log
+
+# Editor & OS-specific files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Optional: Mac system files
+*.DS_Store
+
+# TypeScript build cache (if applicable)
+*.tsbuildinfo
