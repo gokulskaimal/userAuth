@@ -17,11 +17,13 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     if (isSuccess || user) {
-      navigate("/profile");
+      navigate("/dashboard");
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
@@ -67,7 +69,10 @@ function Login() {
         </h1>
         <form onSubmit={onSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -82,7 +87,10 @@ function Login() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -106,7 +114,10 @@ function Login() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Don&apos;t have an account?{" "}
-            <Link to="/register" className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-150 ease-in-out">
+            <Link
+              to="/register"
+              className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-150 ease-in-out"
+            >
               Register
             </Link>
           </p>

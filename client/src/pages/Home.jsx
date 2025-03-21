@@ -10,9 +10,6 @@ function Home() {
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-6">
           Welcome to User Management System
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
-          A complete application with user authentication and profile management
-        </p>
 
         {user ? (
           <div className="space-y-6">
@@ -20,10 +17,10 @@ function Home() {
               Welcome back, <span className="font-medium">{user.name}</span>!
             </p>
             <Link
-              to="/profile"
+              to="/dashboard"
               className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
             >
-              Go to Profile
+              Go to Dashboard
             </Link>
           </div>
         ) : (

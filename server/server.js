@@ -9,19 +9,19 @@ const connectDB = require("./config/db")
 dotenv.config()
 
 // Connect to database
-connectDB()
+connectDB()  
 
 const app = express()
  
 // Middleware
 app.use(cors()) 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false })) 
 
 // Routes  
 app.use("/api/users", require("./routes/userRoutes"))
 app.use("/api/admin", require("./routes/adminRoutes"))
- 
+  
 // Error handler middleware
 app.use(errorHandler)
 

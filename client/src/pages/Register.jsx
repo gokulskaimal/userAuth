@@ -23,7 +23,7 @@ function Register() {
 
   useEffect(() => {
     if (isSuccess || user) {
-      navigate("/profile");
+      navigate("/dashboard");
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
@@ -43,15 +43,17 @@ function Register() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // When validating email in Register.jsx or any other form
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
-      return;
+      toast.error("Please enter a valid email address")
+      return
     }
 
+    // When validating password in Register.jsx or any other form
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
+      toast.error("Password must be at least 6 characters")
+      return
     }
 
     if (password !== password2) {

@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css"
 // Pages
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import Dashboard from "./pages/Dashboard"
 import Home from "./pages/Home"
 import Profile from "./pages/Profile"
 import AdminLogin from "./pages/admin/AdminLogin"
@@ -27,12 +28,19 @@ function App() {
         <Navbar />
         <div className="container mx-auto py-6 px-4">
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={!user ? <Login /> : <Navigate to="/profile" />} />
-            <Route path="/register" element={!user ? <Register /> : <Navigate to="/profile" />} />
+            <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+            <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+            
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* Protected User Routes */}
             <Route
               path="/profile"
               element={
@@ -42,7 +50,6 @@ function App() {
               }
             />
 
-            {/* Admin Routes */}
             <Route path="/admin/login" element={!admin ? <AdminLogin /> : <Navigate to="/admin/dashboard" />} />
             <Route
               path="/admin/dashboard"
@@ -53,13 +60,11 @@ function App() {
               }
             />
 
-            {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
 
-        {/* Toast Container for notifications */}
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-right" autoClose={2000} />
       </div>
     </Router>
   )

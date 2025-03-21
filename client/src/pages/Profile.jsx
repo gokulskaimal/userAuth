@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getProfile, updateProfile, uploadProfileImage, reset } from "../features/users/userSlice";
+import { updateUser } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 
@@ -12,11 +13,12 @@ function Profile() {
   const { profile, isLoading, isSuccess, isError, message } = useSelector((state) => state.users);
 
   const [formData, setFormData] = useState({
-    name: "",
+    name: "", 
     email: "",
-    bio: "",
+    password: "",
+    password2: "",
   });
-
+  
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
 
@@ -32,13 +34,24 @@ function Profile() {
       setFormData({
         name: profile.name || "",
         email: profile.email || "",
-        bio: profile.bio || "",
+        password: "",
+        password2: "",
       });
       if (profile.profileImage) {
         setPreviewUrl(profile.profileImage);
       }
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (isSuccess && profile) {
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        dispatch(updateUser(user));
+      }
+    }
+  }, [isSuccess, profile, dispatch]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -49,29 +62,73 @@ function Profile() {
 
   const onSubmit = (e) => {
     e.preventDefault();
+  
 
-    if (!formData.name || !formData.email) {
-      toast.error("Name and email are required");
+    if (!formData.name.trim()) {
+      toast.error("Name is required");
+      return;
+    } 
+    if (formData.name.trim().length < 2) {
+      toast.error("Name must be at least 2 characters");
+      return;
+    } 
+    if (!/^[a-zA-Z\s]+$/.test(formData.name.trim())) {
+      toast.error("Name should contain only letters and spaces");
       return;
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+  
+    // Email validation
+    if (!formData.email.trim()) {
+      toast.error("Email is required");
+      return;
+    } 
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email.trim())) {
       toast.error("Please enter a valid email address");
       return;
     }
-
-    dispatch(updateProfile(formData));
+  
+    // Password validation - only if password is provided
+    if (formData.password) {
+      if (formData.password.length < 6) {
+        toast.error("Password must be at least 6 characters");
+        return;
+      }
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+        toast.error("Password must include uppercase, lowercase, and number");
+        return;
+      }
+      if (formData.password !== formData.password2) {
+        toast.error("Passwords do not match");
+        return;
+      }
+    }
+  
+    // Prepare data for submission - trim whitespace
+    const updatedData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      password: formData.password || undefined,
+    };
+  
+    dispatch(updateProfile(updatedData));
   };
 
   const onImageChange = (e) => {
     const file = e.target.files[0];
+    
+    if (!file) {
+      return;
+    }
+    
     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Only JPG, JPEG, and PNG files are allowed");
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
+    
+
+    const maxSize = 2 * 1024 * 1024; 
+    if (file.size > maxSize) {
       toast.error("File size must be less than 2MB");
       return;
     }
@@ -161,6 +218,7 @@ function Profile() {
                   required
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 placeholder-gray-400"
                 />
+              
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -177,18 +235,33 @@ function Profile() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 placeholder-gray-400"
                 />
               </div>
-              <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-                  Bio
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  New Password
                 </label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  value={formData.bio}
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
                   onChange={onChange}
-                  placeholder="Tell us about yourself"
-                  rows="4"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-700 placeholder-gray-400"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="Leave blank to keep current password"
+                />
+        
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password2">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  id="password2"
+                  name="password2"
+                  value={formData.password2}
+                  onChange={onChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="Confirm new password"
                 />
               </div>
               <button

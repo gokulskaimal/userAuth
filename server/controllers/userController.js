@@ -3,9 +3,6 @@ const bcrypt = require("bcryptjs")
 const asyncHandler = require("express-async-handler")
 const User = require("../models/userModel")
 
-// @desc    Register new user
-// @route   POST /api/users/register
-// @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body
 
@@ -43,9 +40,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 })
 
-// @desc    Authenticate a user
-// @route   POST /api/users/login
-// @access  Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
 
@@ -65,9 +59,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 })
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).select("-password")
 
@@ -79,16 +70,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 })
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id)
 
   if (user) {
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
-    user.bio = req.body.bio || user.bio
+    // Remove bio update
 
     if (req.body.password) {
       user.password = req.body.password
@@ -100,8 +88,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       _id: updatedUser.id,
       name: updatedUser.name,
       email: updatedUser.email,
-      bio: updatedUser.bio,
       profileImage: updatedUser.profileImage,
+      token: generateToken(updatedUser._id),
     })
   } else {
     res.status(404)
@@ -109,9 +97,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 })
 
-// @desc    Upload profile image
-// @route   POST /api/users/profile/upload
-// @access  Private
 const uploadProfileImage = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id)
 
@@ -133,14 +118,15 @@ const uploadProfileImage = asyncHandler(async (req, res) => {
     _id: user.id,
     name: user.name,
     email: user.email,
-    bio: user.bio,
     profileImage: user.profileImage,
+    token: generateToken(user._id), // Add token to refresh user state
   })
 })
 
 // Generate JWT
+// In userController.js
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id, isAdmin: false }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   })
 }

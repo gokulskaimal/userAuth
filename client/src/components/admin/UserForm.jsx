@@ -9,7 +9,7 @@ function UserForm({ user, onSubmit, onCancel }) {
     email: "",
     password: "",
     password2: "",
-    bio: "",
+    // Remove bio field
   })
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function UserForm({ user, onSubmit, onCancel }) {
         email: user.email || "",
         password: "",
         password2: "",
-        bio: user.bio || "",
+        // Remove bio field
       })
     }
   }, [user])
@@ -54,10 +54,18 @@ function UserForm({ user, onSubmit, onCancel }) {
         return
       }
 
+      // Standardize password validation
       if (formData.password.length < 6) {
         toast.error("Password must be at least 6 characters")
         return
       }
+
+      // Consider adding stronger validation if needed:
+      // const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/
+      // if (!passwordRegex.test(formData.password)) {
+      //   toast.error("Password must include at least one uppercase letter, one lowercase letter, and one number")
+      //   return
+      // }
 
       if (formData.password !== formData.password2) {
         toast.error("Passwords do not match")

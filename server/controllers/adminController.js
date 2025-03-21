@@ -123,7 +123,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 })
 
 // Generate JWT
-const generateToken = (id, isAdmin = false) => {
+// In adminController.js
+const generateToken = (id, isAdmin) => {
   return jwt.sign({ id, isAdmin }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   })

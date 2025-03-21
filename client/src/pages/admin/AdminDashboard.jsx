@@ -99,9 +99,11 @@ function UserForm({ user, onSubmit, onCancel }) {
 
     if (!user && !formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password && formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (
+    } else if (formData.password && formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    } 
+    // Remove the complex password validation that requires special characters
+    if (
       formData.password &&
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(formData.password)
     ) {
@@ -194,7 +196,7 @@ function UserForm({ user, onSubmit, onCancel }) {
   );
 }
 
-// Updated UserList Component with Sl. No. and Profile Picture
+// Updated UserList Component with Created At column
 function UserList({ users, onEdit, onDelete }) {
   return (
     <div className="overflow-x-auto">
@@ -212,6 +214,9 @@ function UserList({ users, onEdit, onDelete }) {
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Email
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Created At
             </th>
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
@@ -244,6 +249,9 @@ function UserList({ users, onEdit, onDelete }) {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {user.email}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button
@@ -360,23 +368,14 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto bg-white shadow-xl rounded-xl p-6 lg:p-8">
-        <div className="border-b border-gray-200 pb-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Admin Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage users and system settings with ease
-          </p>
-        </div>
 
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-800">
-                User Management
-              </h2>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                Admin Dashboard
+              </h1>
               <p className="mt-1 text-sm text-gray-500">
-                Add, edit, or remove users from the system
               </p>
             </div>
             <button

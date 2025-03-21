@@ -10,6 +10,10 @@ function Navbar() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { admin } = useSelector((state) => state.admin);
+  const { profile } = useSelector((state) => state.users);
+
+  // Use profile name if available, otherwise fallback to user name
+  const displayName = profile?.name || user?.name;
 
   const onLogout = () => {
     dispatch(logout());
@@ -32,7 +36,13 @@ function Navbar() {
           <div className="flex items-center space-x-6">
             {user ? (
               <>
-                <span className="text-sm font-medium">Welcome, {user.name}</span>
+                <span className="text-sm font-medium">Welcome, {displayName}</span>
+                <Link
+                  to="/dashboard"
+                  className="text-sm font-medium hover:text-indigo-200 transition duration-150 ease-in-out"
+                >
+                  Dashboard
+                </Link>
                 <Link
                   to="/profile"
                   className="text-sm font-medium hover:text-indigo-200 transition duration-150 ease-in-out"
